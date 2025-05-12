@@ -1,0 +1,216 @@
+.super_admin {
+    height: 100vh;
+    background-color: #ddd;
+
+    .sidebar {
+        position: relative;
+
+        .sidebar-head {
+            width: 210px;
+            height: 98.4px;
+
+            img {
+                height: 20px;
+            }
+
+            h2 {
+                font-size: 15px;
+                font-weight: 600;
+            }
+
+            padding: 20px 10px;
+            border-bottom: 1px solid #777;
+        }
+
+        .list-group-item {
+            padding: 20px 10px;
+            color: #000;
+            border-radius: 10px;
+            transition: .2s ease-out;
+            i {
+                background-color: #888;
+                color: #fff;
+                padding: 10px;
+                border-radius: 50%;
+                font-size: 16px;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            h6 {
+                font-size: 15px;
+                font-weight: 400;
+            }
+
+            p {
+                color: #444;
+                margin-top: 3px;
+                font-size: 7px;
+            }
+        }
+
+        .list-group-item:hover{
+            background-color: #ccc;
+            i{
+                background-color: #fff;
+                color: rgb(255, 60, 0);
+            }
+
+            h6{
+                color: rgb(255, 60, 0);
+            }
+        }
+
+        .nav {
+            h1 {
+                font-size: 17px;
+            }
+
+            li {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 0 20px;
+                border-radius: 10px;
+                transition: .2s ease-out;
+                cursor: pointer;
+            }
+
+           li:hover{
+                border-color: #666;
+                background-color: #fff;
+                box-shadow: 1px 3px 10px 1px #000;
+
+                i{
+                    color: rgb(255, 60, 0)
+                }
+            }
+
+            i {
+                font-size: 20px;
+                color: #333;
+            }
+
+            span {
+                color: #555;
+                font-size: 14px;
+                padding: 5px 10px;
+            }
+        }
+
+        .logout {
+            bottom: 20px;
+            left: 50px;
+            padding: 10px 30px;
+            border-radius: 10px;
+            border: 2px solid red;
+            background-color: rgb(249, 79, 79);
+            cursor: pointer;
+            display: flex;
+            gap: 10px;
+            transition: .3s ease;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+    }
+
+    .table {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 20px;
+        border: 1px solid #999;
+
+        h2 {
+            font-size: 30px;
+            margin: 10px 30px;
+            color: rgb(255, 60, 0);
+            font-weight: 600;
+        }
+
+        .top-box {
+
+            .btn {
+                padding: 6px 20px 9px 20px;
+                font-size: 13px;
+                border-radius: 10px;
+                margin: 0 5px;
+                cursor: pointer;
+            }
+
+            .reset {
+                background-color: rgb(48, 0, 145);
+                color: #fff;
+            }
+
+            .edit {
+                background: #000;
+                color: #ccc;
+                border: 1px solid #ccc;
+            }
+
+            .add {
+                background-color: rgb(0, 139, 58);
+                color: #fff;
+            }
+
+            .delete {
+                background: rgb(249, 79, 79);
+                color: #fff;
+            }
+        }
+    }
+
+    .table-main {
+        table {
+            margin: 20px auto;
+            border-collapse: separate !important;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            padding: 0;
+
+            thead {
+                .title {
+                    th {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #181D1F;
+                        padding: 13px;
+                        position: relative;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            top: 35%;
+                            right: 0;
+                            height: 30%;
+                            width: 2px;
+                            background-color: #ccc;
+                        }
+
+                        &:last-child::after {
+                            display: none;
+                        }
+
+                        cursor: col-resize;
+                    }
+                }
+                input {
+                    height: 34.4px;
+                    border-radius: 5px;
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+
+
+
+
+}
