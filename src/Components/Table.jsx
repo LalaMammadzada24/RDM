@@ -1,7 +1,24 @@
-import React, { useRef, useEffect }  from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import axios from 'axios';
 
-const Table = () => {
+const Table = ({ id }) => {
     const tableRef = useRef(null);
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get(`http://100.42.188.53:9530/super-admin/${id}`);
+                setData(response.data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        if (id) {
+            fetchData();
+        }
+    }, [id]);
 
     useEffect(() => {
         const table = tableRef.current;
@@ -62,7 +79,7 @@ const Table = () => {
 
         setupResizers();
     }, []);
-    
+
     return (
         <div className="col-12 col-sm-12 col-md-10 mt-lg-5">
             <div className="table" ref={tableRef}>
@@ -96,43 +113,33 @@ const Table = () => {
                                 <th>Patient</th>
                             </tr>
                             <tr>
-                                <td><input className="input-id form-control form-control-sm" /></td>
-                                <td><input className="input-huquq form-control form-control-sm" /></td>
-                                <td><input className="input-aciqlama form-control form-control-sm" /></td>
-                                <td><input className="input-superdmin form-control form-control-sm" /></td>
-                                <td><input className="input-admin form-control form-control-sm" /></td>
-                                <td><input className="input-employee form-control form-control-sm" /></td>
-                                <td><input className="input-patient form-control form-control-sm" /></td>
+                                <td><input className="form-control form-control-sm" value={data.id || ''} /></td>
+                                <td><input className="form-control form-control-sm" value={data.huquq || ''} /></td>
+                                <td><input className="form-control form-control-sm" value={data.aciqlama || ''} /></td>
+                                <td><input className="form-control form-control-sm" value={data.superadmin || ''} /></td>
+                                <td><input className="form-control form-control-sm" value={data.admin || ''} /></td>
+                                <td><input className="form-control form-control-sm" value={data.employee || ''} /></td>
+                                <td><input className="form-control form-control-sm" value={data.patient || ''} /></td>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                <td>@mdo</td>
-                                <td>@mdo</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">2</th>
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                <td>@fat</td>
-                                <td>@fat</td>
-                                <td>@fat</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">3</th>
-                                <td>John</td>
-                                <td>Doe</td>
-                                <td>@social</td>
-                                <td>@social</td>
-                                <td>@social</td>
-                                <td>@social</td>
-                            </tr>
+                            {data.length > 0 ? (
+                                data.map((item) => (
+                                    <tr key={item.id}>
+                                        <th scope="row">{item.id}</th>
+                                        <td>{item.huquq}</td>
+                                        <td>{item.aciqlama}</td>
+                                        <td>{item.superadmin}</td>
+                                        <td>{item.admin}</td>
+                                        <td>{item.employee}</td>
+                                        <td>{item.patient}</td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7">Məlumat yoxdur</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -142,3 +149,5 @@ const Table = () => {
 };
 
 export default Table;
+
+

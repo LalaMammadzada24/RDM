@@ -45,7 +45,7 @@ const SuperAdmin = () => {
                         </button>
                     </div>
                 </div>
-                <Table/>
+                <Table id={3}/>
             </div>
         </div>
 
