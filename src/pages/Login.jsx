@@ -11,7 +11,9 @@ const Login = () => {
         import('bootstrap');
     }, []);
 
+    
     return (
+
         <div className='login d-flex justify-content-center align-items-center'>
             <div className="center-box d-flex">
                 <div className="right-box d-flex justify-content-center align-items-center flex-column">

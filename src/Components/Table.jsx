@@ -1,84 +1,57 @@
-import React, { useRef, useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useRef, useEffect, useState } from "react";
+import axios from "axios";
 
 const Table = ({ id }) => {
     const tableRef = useRef(null);
     const [data, setData] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const limit = 10;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`http://100.42.188.53:9530/super-admin/${id}`);
-                setData(response.data);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
+    const fetchData = async (page) => {
+        setLoading(true);
+        try {
+           // const token = localStorage.getItem("access_token");
 
-        if (id) {
-            fetchData();
+            const response = await axios.get(
+                `http://100.42.188.53:9530/authorities?page=0&pageSize=20`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    params: {
+                        page,
+                        limit,
+                    },
+                }
+            );
+
+            const { data: items, totalPages } = response.data;
+            setData(items);
+            setTotalPages(totalPages);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        } finally {
+            setLoading(false);
         }
-    }, [id]);
+    };
 
     useEffect(() => {
-        const table = tableRef.current;
-        if (!table) return;
+        fetchData(currentPage);
+    }, [currentPage]);
 
-        let pressed = false;
-        let startX;
-        let startWidth;
-        let currentTh;
+    const goToNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
 
-        const onMouseMove = (e) => {
-            if (!pressed || !currentTh) return;
-            const diffX = e.clientX - startX;
-            currentTh.style.width = `${startWidth + diffX}px`;
-        };
-
-        const onMouseUp = () => {
-            pressed = false;
-            currentTh = null;
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-        };
-
-        const setupResizers = () => {
-            const headers = table.querySelectorAll('thead tr.title th');
-            const initialWidths = [120, 270, 320, 120, 120, 120, 120];
-
-            headers.forEach((th, index) => {
-                th.style.width = `${initialWidths[index]}px`;
-
-                if (th.querySelector('.resizer')) return;
-
-                const resizer = document.createElement('div');
-                resizer.className = 'resizer';
-                resizer.style.position = 'absolute';
-                resizer.style.top = '0';
-                resizer.style.right = '0';
-                resizer.style.width = '5px';
-                resizer.style.height = '100%';
-                resizer.style.cursor = 'col-resize';
-                resizer.style.userSelect = 'none';
-                resizer.style.zIndex = '10';
-
-                resizer.addEventListener('mousedown', (e) => {
-                    pressed = true;
-                    startX = e.clientX;
-                    currentTh = th;
-                    startWidth = th.offsetWidth;
-
-                    document.addEventListener('mousemove', onMouseMove);
-                    document.addEventListener('mouseup', onMouseUp);
-                });
-
-                th.style.position = 'relative';
-                th.appendChild(resizer);
-            });
-        };
-
-        setupResizers();
-    }, []);
+    const goToPreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
 
     return (
         <div className="col-12 col-sm-12 col-md-10 mt-lg-5">
@@ -87,23 +60,24 @@ const Table = ({ id }) => {
                     <h2>Hüquqlar</h2>
                     <div className="btn-box my-auto">
                         <button className="reset btn">
-                            <i className='fa-solid fa-rotate-left me-3'></i>Cədvəli bərpa et
+                            <i className="fa-solid fa-rotate-left me-2"></i>Cədvəli bərpa et
                         </button>
                         <button className="edit btn">
-                            <i className='fa-solid fa-pen me-3'></i>Redaktə et
+                            <i className="fa-solid fa-pen me-2"></i>Redaktə et
                         </button>
                         <button className="add btn">
-                            <i className='fa-solid fa-plus me-3'></i>Əlavə et
+                            <i className="fa-solid fa-plus me-2"></i>Əlavə et
                         </button>
                         <button className="delete btn">
-                            <i className='fa-solid fa-trash me-3'></i>Sil
+                            <i className="fa-solid fa-trash me-2"></i>Sil
                         </button>
                     </div>
                 </div>
+
                 <div className="table-main">
                     <table className="table table-striped">
                         <thead className="table-light">
-                            <tr className='title'>
+                            <tr className="title">
                                 <th>ID</th>
                                 <th>Hüquq</th>
                                 <th>Açıqlama</th>
@@ -112,27 +86,22 @@ const Table = ({ id }) => {
                                 <th>Employee</th>
                                 <th>Patient</th>
                             </tr>
-                            <tr>
-                                <td><input className="form-control form-control-sm" value={data.id || ''} /></td>
-                                <td><input className="form-control form-control-sm" value={data.huquq || ''} /></td>
-                                <td><input className="form-control form-control-sm" value={data.aciqlama || ''} /></td>
-                                <td><input className="form-control form-control-sm" value={data.superadmin || ''} /></td>
-                                <td><input className="form-control form-control-sm" value={data.admin || ''} /></td>
-                                <td><input className="form-control form-control-sm" value={data.employee || ''} /></td>
-                                <td><input className="form-control form-control-sm" value={data.patient || ''} /></td>
-                            </tr>
                         </thead>
                         <tbody>
-                            {data.length > 0 ? (
+                            {loading ? (
+                                <tr>
+                                    <td colSpan="7">Yüklənir...</td>
+                                </tr>
+                            ) : data.length > 0 ? (
                                 data.map((item) => (
                                     <tr key={item.id}>
                                         <th scope="row">{item.id}</th>
                                         <td>{item.huquq}</td>
                                         <td>{item.aciqlama}</td>
-                                        <td>{item.superadmin}</td>
-                                        <td>{item.admin}</td>
-                                        <td>{item.employee}</td>
-                                        <td>{item.patient}</td>
+                                        <td>{item.superadmin ? "Bəli" : "Xeyr"}</td>
+                                        <td>{item.admin ? "Bəli" : "Xeyr"}</td>
+                                        <td>{item.employee ? "Bəli" : "Xeyr"}</td>
+                                        <td>{item.patient ? "Bəli" : "Xeyr"}</td>
                                     </tr>
                                 ))
                             ) : (
@@ -143,11 +112,28 @@ const Table = ({ id }) => {
                         </tbody>
                     </table>
                 </div>
+
+                <div className="pagination d-flex justify-content-end mt-3 gap-2">
+                    <button
+                        className="btn"
+                        onClick={goToPreviousPage}
+                        disabled={currentPage === 1}
+                    >
+                        <i className="fa-solid fa-arrow-left"></i>Əvvəlki
+                    </button>
+
+                    <button
+                        className="btn"
+                        onClick={goToNextPage}
+                        disabled={currentPage === totalPages}
+                    >
+                        Növbəti
+                        <i className="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
             </div>
         </div>
     );
 };
 
 export default Table;
-
-
